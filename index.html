@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabe-Tabe — Onigiris faits à la main à Épernay</title>
+<meta name="description" content="Commande tes onigiris à emporter ou en livraison à Épernay. Riz vinaigré, garnitures maison, préparation du jour.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+:root{
+  --ink:#201d1a;
+  --ink-soft:#6b6255;
+  --cream:#f3ece0;
+  --paper:#fffdf8;
+  --line:#e6dbc7;
+  --red:#a13129;
+  --red-dark:#7c231d;
+  --red-tint:#fbeae7;
+  --radius-s:10px;
+  --radius-m:18px;
+  --shadow:0 20px 44px -28px rgba(32,29,26,.45);
+  --font-display:'Shippori Mincho', serif;
+  --font-body:'Work Sans', -apple-system, sans-serif;
+  --maxw:1100px;
+}
+
+/* ============================================================
+   2. RESET
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);margin:0;font-weight:600;letter-spacing:.01em}
+p{margin:0}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit;font-size:16px}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--red-dark);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
+
+/* ============================================================
+   3. LAYOUT SHELL
+   ============================================================ */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+
+.site-header{position:sticky;top:0;z-index:30;background:rgba(243,236,224,.92);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.site-header .wrap{display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding-top:14px;padding-bottom:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.brand-fallback{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--cream);
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px}
+.brand-name{font-family:var(--font-display);font-size:20px;line-height:1.1}
+.brand-sub{font-size:12.5px;color:var(--ink-soft)}
+.info-chip{font-size:13px;color:var(--ink-soft);text-align:right;display:none}
+@media (min-width:640px){.info-chip{display:block}}
+
+main{padding-bottom:120px}
+
+.hero{padding:40px 0 28px}
+.hero h1{font-size:34px;line-height:1.15}
+.hero p{margin-top:10px;max-width:52ch;color:var(--ink-soft);font-size:15.5px}
+
+/* two-column on larger screens */
+.layout-grid{display:grid;gap:32px}
+@media (min-width:960px){
+  .layout-grid{grid-template-columns:1.5fr 1fr;align-items:start}
+  .cart-panel{position:sticky;top:92px}
+}
+
+/* ============================================================
+   4. MENU
+   ============================================================ */
+.menu-list{border-top:1px solid var(--line)}
+.menu-item{border-bottom:1px solid var(--line);padding:22px 0;display:grid;gap:14px}
+.menu-item-top{display:flex;justify-content:space-between;gap:16px}
+.menu-item-photo{width:76px;height:76px;flex:none;border-radius:14px;object-fit:cover;
+  border:1px solid var(--line);background:var(--paper)}
+.menu-item-text{flex:1;min-width:0}
+.menu-item h3{font-size:19px}
+.menu-item .desc{color:var(--ink-soft);font-size:14px;margin-top:4px;max-width:46ch}
+
+.size-row{display:flex;gap:8px}
+.size-btn{flex:1;border:1px solid var(--line);background:var(--paper);border-radius:999px;
+  padding:9px 6px;font-weight:600;font-size:13.5px;color:var(--ink);display:flex;
+  flex-direction:column;align-items:center;line-height:1.3;transition:border-color .15s, color .15s, background .15s}
+.size-btn strong{font-weight:700;font-size:13.5px}
+.size-btn.active{border-color:var(--red);background:var(--red-tint);color:var(--red-dark)}
+
+.qty-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.stepper button{width:38px;height:38px;background:var(--paper);border:0;font-size:18px;line-height:1;color:var(--ink)}
+.stepper button:active{background:var(--red-tint)}
+.stepper output{width:34px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.item-summary{font-size:13px;color:var(--ink-soft)}
+.item-summary.has{color:var(--red-dark);font-weight:600}
+
+/* ============================================================
+   5. CART PANEL / DRAWER
+   ============================================================ */
+.cart-panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-m);
+  padding:22px;box-shadow:var(--shadow)}
+.cart-panel h2{font-size:20px;margin-bottom:14px}
+
+.cart-lines{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.cart-line{display:grid;grid-template-columns:1fr auto;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.cart-line strong{font-size:14.5px}
+.cart-line small{color:var(--ink-soft);font-size:12.5px}
+.cart-line .amount{font-weight:700;text-align:right;white-space:nowrap}
+.remove-btn{background:none;border:0;color:var(--ink-soft);font-size:12px;text-decoration:underline;
+  padding:2px 0;margin-top:2px}
+.note-input{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:8px;
+  padding:7px 9px;font-size:13px;background:var(--cream)}
+.empty-cart{color:var(--ink-soft);font-size:14px;padding:8px 0}
+
+.fulfilment-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.fulfilment-row button{border:1px solid var(--line);background:var(--paper);border-radius:12px;
+  padding:12px 8px;font-weight:700;font-size:14px;display:flex;align-items:center;
+  justify-content:center;gap:6px}
+.fulfilment-row button.active{border-color:var(--red);background:var(--red-tint);color:var(--red-dark)}
+
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;
+  padding:11px 12px;background:var(--cream)}
+.field.error input{border-color:var(--red)}
+.field-error{color:var(--red-dark);font-size:12.5px;margin-top:4px;display:none}
+.field.error .field-error{display:block}
+.delivery-address{display:none}
+.delivery-address.show{display:block}
+
+.totals-row{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;color:var(--ink-soft)}
+.totals-row.grand{color:var(--ink);font-weight:700;font-size:17px;padding-top:10px;
+  border-top:1px solid var(--line);margin-top:8px}
+
+.submit-btn{width:100%;background:var(--red);color:#fff;border:0;border-radius:999px;
+  padding:15px;font-weight:700;font-size:15.5px;margin-top:16px;transition:background .15s}
+.submit-btn:disabled{background:#c9c0b3;cursor:not-allowed}
+.submit-btn:not(:disabled):hover{background:var(--red-dark)}
+.form-error{color:var(--red-dark);font-size:13.5px;margin-top:10px;display:none}
+.form-error.show{display:block}
+
+/* mobile sticky bar + drawer */
+.mobile-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;background:var(--ink);
+  color:#fff;border-radius:999px;padding:12px 20px;display:flex;align-items:center;
+  justify-content:space-between;box-shadow:0 18px 40px rgba(0,0,0,.28);
+  transform:translateY(140%);transition:transform .25s ease}
+.mobile-bar.show{transform:translateY(0)}
+.mobile-bar .count{font-size:13px;opacity:.8}
+.mobile-bar .total{font-weight:700;font-size:16px}
+.mobile-bar button{background:var(--red);color:#fff;border:0;border-radius:999px;
+  padding:10px 18px;font-weight:700;font-size:14px}
+
+@media (min-width:960px){.mobile-bar{display:none}}
+@media (max-width:959px){
+  .cart-panel{position:fixed;inset:0;z-index:60;border-radius:0;overflow-y:auto;
+    transform:translateY(100%);transition:transform .3s ease;padding:22px 20px 40px}
+  .cart-panel.open{transform:translateY(0)}
+  .cart-panel-close{position:sticky;top:0;background:var(--paper);display:flex;
+    justify-content:flex-end;padding-bottom:8px;margin:-4px 0 8px}
+  .cart-panel-close button{background:none;border:0;font-size:15px;font-weight:600;
+    color:var(--ink-soft);padding:6px}
+}
+.cart-panel-close{display:none}
+@media (max-width:959px){.cart-panel-close{display:flex}}
+
+/* ============================================================
+   6. STAMP / SUCCESS OVERLAY
+   ============================================================ */
+.stamp-overlay{position:fixed;inset:0;z-index:100;background:rgba(32,29,26,.5);
+  display:none;place-items:center;padding:20px}
+.stamp-overlay.show{display:grid}
+.stamp-card{background:var(--paper);border-radius:var(--radius-m);padding:40px 32px;
+  text-align:center;max-width:320px;box-shadow:var(--shadow)}
+.stamp{width:88px;height:88px;border:4px solid var(--red);border-radius:50%;margin:0 auto 18px;
+  display:flex;align-items:center;justify-content:center;color:var(--red);font-size:36px;
+  font-weight:800;transform:rotate(-8deg);animation:stamp-hit .35s ease-out}
+@keyframes stamp-hit{from{transform:rotate(-8deg) scale(2.2);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+.stamp-card h3{font-size:19px;margin-bottom:6px}
+.stamp-card p{font-size:14px;color:var(--ink-soft)}
+.stamp-card .order-number{color:var(--red-dark);font-weight:700}
+.stamp-card button{margin-top:20px;background:var(--ink);color:#fff;border:0;border-radius:999px;
+  padding:10px 22px;font-weight:600;font-size:14px}
+
+footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--ink-soft);font-size:13px}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <img src="assets/logo-tabe-tabe.jpg" alt="Tabe-Tabe" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'brand-fallback',textContent:'田'}))">
+      <div>
+        <div class="brand-name">Tabe-Tabe</div>
+        <div class="brand-sub">Onigiris faits à la main</div>
+      </div>
+    </div>
+    <div class="info-chip">À retirer ou en livraison · Épernay</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="hero">
+      <h1>La carte du jour</h1>
+      <p>Riz vinaigré et garnitures préparées le matin même. Choisis une taille pour chaque onigiri, ajuste les quantités, puis passe commande.</p>
+    </section>
+
+    <div class="layout-grid">
+      <section>
+        <div class="menu-list" id="menuList" aria-label="Liste des onigiris"></div>
+      </section>
+
+      <aside class="cart-panel" id="cartPanel" aria-label="Ma commande">
+        <div class="cart-panel-close">
+          <button type="button" id="closeCart">Fermer</button>
+        </div>
+        <h2>Ma commande</h2>
+
+        <div class="cart-lines" id="cartLines"></div>
+
+        <div class="fulfilment-row" role="group" aria-label="Mode de réception">
+          <button type="button" class="active" data-mode="À retirer">🛍️ À retirer</button>
+          <button type="button" data-mode="Livraison">🚚 Livraison · 5&nbsp;€</button>
+        </div>
+
+        <div class="field delivery-address" id="deliveryAddressField">
+          <label for="deliveryAddress">Adresse de livraison</label>
+          <input id="deliveryAddress" placeholder="Ex. 12 rue de Reims, Épernay" autocomplete="street-address">
+        </div>
+
+        <div class="field" id="nameField">
+          <label for="customerName">Nom</label>
+          <input id="customerName" placeholder="Ton nom" autocomplete="name">
+          <div class="field-error">Indique un nom pour valider la commande.</div>
+        </div>
+
+        <div class="field">
+          <label for="customerPhone">Téléphone (optionnel)</label>
+          <input id="customerPhone" type="tel" placeholder="06 12 34 56 78" autocomplete="tel">
+        </div>
+
+        <div class="field">
+          <label for="orderNote">Remarque générale (optionnel)</label>
+          <textarea id="orderNote" rows="2" maxlength="200" placeholder="Allergie, heure de passage souhaitée…"></textarea>
+        </div>
+
+        <div class="totals-row" id="deliveryRow" style="display:none">
+          <span>Livraison</span><span>5,00 €</span>
+        </div>
+        <div class="totals-row grand">
+          <span>Total</span><span id="grandTotal">0,00 €</span>
+        </div>
+
+        <button type="button" class="submit-btn" id="submitOrder" disabled>Valider ma commande</button>
+        <div class="form-error" id="formError"></div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<div class="mobile-bar" id="mobileBar">
+  <div>
+    <div class="count" id="mobileCount">0 article</div>
+    <div class="total" id="mobileTotal">0,00 €</div>
+  </div>
+  <button type="button" id="openCart">Voir ma commande</button>
+</div>
+
+<div class="stamp-overlay" id="stampOverlay">
+  <div class="stamp-card">
+    <div class="stamp">✓</div>
+    <h3>Commande reçue</h3>
+    <p>Numéro <span class="order-number" id="orderNumber">—</span>. On te prévient dès qu'elle est prête.</p>
+    <button type="button" id="stampClose">Fermer</button>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">Tabe-Tabe · Épernay</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+
+/* ============================================================
+   CONFIG — même projet Supabase que la version précédente
+   ============================================================ */
+const SUPABASE_URL = "https://xftqhsjlbcvnrjhdghlm.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_fJC2u8I3IfSMBLhd_aAFyA_jc2OouYI";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const DELIVERY_FEE = 5;
+
+/* ============================================================
+   DONNÉES PRODUITS — source unique pour l'affichage et le calcul
+   ============================================================ */
+const products = [
+  { id: "wakame",      name: "Algue Wakame Edamame",         desc: "Riz vinaigré, wakame et edamame, sésame grillé.", mini: 3,   classique: 4,   img: "assets/wakame.webp" },
+  { id: "poulet",       name: "Poulet Teriyaki",               desc: "Poulet mariné teriyaki, oignons nouveaux.",        mini: 3,   classique: 4,   img: "assets/poulet.webp" },
+  { id: "thon-sesame",  name: "Thon Rouge Sésame Sauce Soja",   desc: "Thon rouge mariné au sésame et sauce soja.",       mini: 3,   classique: 4.5, img: "assets/thon-sesame.webp" },
+  { id: "furikake",     name: "Furikake Shiso",                 desc: "Riz assaisonné au furikake et shiso frais.",       mini: 3,   classique: 4,   img: "assets/furikake.webp" },
+  { id: "choco",        name: "Choco Banane",                   desc: "Banane et pépites de chocolat, version sucrée.",   mini: 3,   classique: 4,   img: "assets/choco.webp" },
+  { id: "saumon",       name: "Saumon Ponzu Ciboule",            desc: "Saumon mariné au ponzu, ciboule fraîche.",         mini: 3,   classique: 4.5, img: "assets/saumon.webp" },
+  { id: "thon-mayo",    name: "Thon Mayo",                       desc: "Thon mayonnaise, classique et généreux.",          mini: 3,   classique: 4,   img: "assets/thon-mayo.webp" },
+  { id: "thon-spicy",   name: "Thon Mayo Spicy",                 desc: "Thon mayonnaise relevé au piment.",                mini: 3,   classique: 4,   img: "assets/thon-spicy.webp" },
+  { id: "tamago",       name: "Tamago (Œuf Mayo)",               desc: "Omelette japonaise et mayonnaise maison.",         mini: 3,   classique: 4,   img: "assets/tamago.webp" },
+];
+
+/* état: quantité mini/classique par produit + notes par ligne */
+const state = Object.fromEntries(products.map(p => [p.id, { mini: 0, classique: 0, active: "mini" }]));
+const itemNotes = {};
+let fulfilmentMode = "À retirer";
+
+const eur = n => n.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+const $ = sel => document.querySelector(sel);
+const escapeHtml = s => s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+/* ============================================================
+   RENDU DU MENU
+   ============================================================ */
+function renderMenu() {
+  const list = $("#menuList");
+  list.innerHTML = products.map(p => `
+    <article class="menu-item" data-product="${p.id}">
+      <div class="menu-item-top">
+        <img class="menu-item-photo" src="${p.img}" alt="" loading="lazy" onerror="this.style.display='none'">
+        <div class="menu-item-text">
+          <h3>${escapeHtml(p.name)}</h3>
+          <p class="desc">${escapeHtml(p.desc)}</p>
+        </div>
+      </div>
+      <div class="size-row" role="group" aria-label="Taille — ${escapeHtml(p.name)}">
+        <button type="button" class="size-btn active" data-size="mini">
+          <span>Mini</span><strong>${eur(p.mini)}</strong>
+        </button>
+        <button type="button" class="size-btn" data-size="classique">
+          <span>Classique</span><strong>${eur(p.classique)}</strong>
+        </button>
+      </div>
+      <div class="qty-row">
+        <div class="stepper">
+          <button type="button" data-step="-1" aria-label="Retirer un ${escapeHtml(p.name)}">−</button>
+          <output id="qty-${p.id}">0</output>
+          <button type="button" data-step="1" aria-label="Ajouter un ${escapeHtml(p.name)}">+</button>
+        </div>
+        <span class="item-summary" id="summary-${p.id}">Rien sélectionné</span>
+      </div>
+    </article>
+  `).join("");
+
+  list.querySelectorAll(".menu-item").forEach(card => {
+    const id = card.dataset.product;
+
+    card.querySelectorAll(".size-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state[id].active = btn.dataset.size;
+        card.querySelectorAll(".size-btn").forEach(b => b.classList.toggle("active", b === btn));
+        updateCard(id);
+      });
+    });
+
+    card.querySelectorAll("[data-step]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const s = state[id];
+        const delta = Number(btn.dataset.step);
+        s[s.active] = Math.max(0, Math.min(20, s[s.active] + delta));
+        updateCard(id);
+        renderCart();
+      });
+    });
+  });
+}
+
+function updateCard(id) {
+  const s = state[id];
+  $(`#qty-${id}`).textContent = s[s.active];
+  const total = s.mini + s.classique;
+  const parts = [];
+  if (s.mini) parts.push(`${s.mini} mini`);
+  if (s.classique) parts.push(`${s.classique} classique${s.classique > 1 ? "s" : ""}`);
+  const summary = $(`#summary-${id}`);
+  summary.textContent = total ? parts.join(" et ") : "Rien sélectionné";
+  summary.classList.toggle("has", total > 0);
+}
+
+/* ============================================================
+   PANIER
+   ============================================================ */
+function buildLines() {
+  const lines = [];
+  products.forEach(p => {
+    const s = state[p.id];
+    ["mini", "classique"].forEach(size => {
+      if (s[size] > 0) {
+        lines.push({ id: p.id, size, name: p.name, qty: s[size], price: p[size], amount: s[size] * p[size] });
+      }
+    });
+  });
+  return lines;
+}
+
+function renderCart() {
+  const lines = buildLines();
+  const subtotal = lines.reduce((sum, l) => sum + l.amount, 0);
+  const units = lines.reduce((sum, l) => sum + l.qty, 0);
+  const delivery = fulfilmentMode === "Livraison" ? DELIVERY_FEE : 0;
+  const total = subtotal + delivery;
+
+  $("#deliveryRow").style.display = delivery ? "flex" : "none";
+  $("#grandTotal").textContent = eur(total);
+  $("#mobileTotal").textContent = eur(total);
+  $("#mobileCount").textContent = `${units} article${units > 1 ? "s" : ""}`;
+  $("#mobileBar").classList.toggle("show", units > 0);
+  $("#submitOrder").disabled = units === 0;
+
+  $("#cartLines").innerHTML = lines.length ? lines.map(l => {
+    const key = `${l.id}|${l.size}`;
+    return `
+      <div class="cart-line">
+        <div>
+          <strong>${l.qty} × ${escapeHtml(l.name)}</strong><br>
+          <small>${l.size === "mini" ? "Mini" : "Classique"} · ${eur(l.price)} l'unité</small>
+          <input class="note-input" maxlength="120" data-note-key="${key}"
+                 value="${escapeHtml(itemNotes[key] || "")}" placeholder="Sans piment, sans wakame…">
+        </div>
+        <div>
+          <div class="amount">${eur(l.amount)}</div>
+          <button type="button" class="remove-btn" data-remove="${key}">Retirer</button>
+        </div>
+      </div>`;
+  }).join("") : `<p class="empty-cart">Aucun onigiri sélectionné pour l'instant.</p>`;
+
+  $("#cartLines").querySelectorAll("[data-note-key]").forEach(inp => {
+    inp.addEventListener("input", () => { itemNotes[inp.dataset.noteKey] = inp.value; });
+  });
+  $("#cartLines").querySelectorAll("[data-remove]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const [id, size] = btn.dataset.remove.split("|");
+      state[id][size] = 0;
+      delete itemNotes[btn.dataset.remove];
+      updateCard(id);
+      renderCart();
+    });
+  });
+}
+
+/* mode de réception */
+document.querySelectorAll(".fulfilment-row button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    fulfilmentMode = btn.dataset.mode;
+    document.querySelectorAll(".fulfilment-row button").forEach(b => b.classList.toggle("active", b === btn));
+    $("#deliveryAddressField").classList.toggle("show", fulfilmentMode === "Livraison");
+    renderCart();
+  });
+});
+
+/* ouverture / fermeture du panier sur mobile */
+$("#openCart").addEventListener("click", () => $("#cartPanel").classList.add("open"));
+$("#closeCart").addEventListener("click", () => $("#cartPanel").classList.remove("open"));
+
+/* ============================================================
+   VALIDATION DE COMMANDE
+   ============================================================ */
+function setFieldError(fieldEl, hasError) {
+  fieldEl.classList.toggle("error", hasError);
+}
+
+$("#submitOrder").addEventListener("click", async () => {
+  const btn = $("#submitOrder");
+  const nameInput = $("#customerName");
+  const name = nameInput.value.trim();
+  const phone = $("#customerPhone").value.trim();
+  const deliveryAddress = $("#deliveryAddress").value.trim();
+  const generalNote = $("#orderNote").value.trim();
+  const formError = $("#formError");
+  formError.classList.remove("show");
+
+  let valid = true;
+  setFieldError($("#nameField"), false);
+  if (!name) { setFieldError($("#nameField"), true); valid = false; }
+
+  if (fulfilmentMode === "Livraison" && !deliveryAddress) {
+    formError.textContent = "Indique une adresse pour la livraison.";
+    formError.classList.add("show");
+    $("#deliveryAddress").focus();
+    valid = false;
+  }
+
+  if (!valid) {
+    if (!name) nameInput.focus();
+    return;
+  }
+
+  const lines = buildLines();
+  if (!lines.length) return;
+
+  const articles = lines.map(l => ({ produit: l.name, taille: l.size === "mini" ? "Mini" : "Classique", quantite: l.qty }));
+
+  const noteLines = [];
+  if (fulfilmentMode === "Livraison") noteLines.push(`Adresse livraison : ${deliveryAddress}`);
+  lines.forEach(l => {
+    const note = (itemNotes[`${l.id}|${l.size}`] || "").trim();
+    if (note) noteLines.push(`${l.name} (${l.size === "mini" ? "Mini" : "Classique"} ×${l.qty}) : ${note}`);
+  });
+  if (generalNote) noteLines.push(`Remarque : ${generalNote}`);
+
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Envoi en cours…";
+
+  try {
+    const { data, error } = await sb.rpc("creer_commande", {
+      p_client: name,
+      p_telephone: phone || null,
+      p_mode_retrait: fulfilmentMode,
+      p_note: noteLines.length ? noteLines.join("\n") : null,
+      p_articles: articles,
+    });
+
+    if (error) throw error;
+
+    $("#orderNumber").textContent = data?.numero || "—";
+    $("#stampOverlay").classList.add("show");
+    resetOrder();
+  } catch (err) {
+    formError.textContent = `La commande n'a pas été envoyée (${err.message || "erreur réseau"}). Réessaie.`;
+    formError.classList.add("show");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+    renderCart();
+  }
+});
+
+$("#stampClose").addEventListener("click", () => {
+  $("#stampOverlay").classList.remove("show");
+  $("#cartPanel").classList.remove("open");
+});
+
+function resetOrder() {
+  products.forEach(p => { state[p.id] = { mini: 0, classique: 0, active: "mini" }; updateCard(p.id); });
+  document.querySelectorAll(".size-btn").forEach(b => b.classList.toggle("active", b.dataset.size === "mini"));
+  Object.keys(itemNotes).forEach(k => delete itemNotes[k]);
+  $("#customerName").value = "";
+  $("#customerPhone").value = "";
+  $("#deliveryAddress").value = "";
+  $("#orderNote").value = "";
+  fulfilmentMode = "À retirer";
+  document.querySelectorAll(".fulfilment-row button").forEach(b => b.classList.toggle("active", b.dataset.mode === "À retirer"));
+  $("#deliveryAddressField").classList.remove("show");
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderMenu();
+renderCart();
+</script>
+</body>
+</html>
