@@ -200,7 +200,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--ink-soft
 <header class="site-header">
   <div class="wrap">
     <div class="brand">
-      <img src="assets/logo-tabe-tabe.jpg" alt="Tabe-Tabe" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'brand-fallback',textContent:'田'}))">
+      <img src="logo-tabe-tabe.jpg" alt="Tabe-Tabe" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'brand-fallback',textContent:'田'}))">
       <div>
         <div class="brand-name">Tabe-Tabe</div>
         <div class="brand-sub">Onigiris faits à la main</div>
@@ -307,15 +307,15 @@ const DELIVERY_FEE = 5;
    DONNÉES PRODUITS — source unique pour l'affichage et le calcul
    ============================================================ */
 const products = [
-  { id: "wakame",      name: "Algue Wakame Edamame",         desc: "Riz vinaigré, wakame et edamame, sésame grillé.", mini: 3,   classique: 4,   img: "assets/wakame.webp" },
-  { id: "poulet",       name: "Poulet Teriyaki",               desc: "Poulet mariné teriyaki, oignons nouveaux.",        mini: 3,   classique: 4,   img: "assets/poulet.webp" },
-  { id: "thon-sesame",  name: "Thon Rouge Sésame Sauce Soja",   desc: "Thon rouge mariné au sésame et sauce soja.",       mini: 3,   classique: 4.5, img: "assets/thon-sesame.webp" },
-  { id: "furikake",     name: "Furikake Shiso",                 desc: "Riz assaisonné au furikake et shiso frais.",       mini: 3,   classique: 4,   img: "assets/furikake.webp" },
-  { id: "choco",        name: "Choco Banane",                   desc: "Banane et pépites de chocolat, version sucrée.",   mini: 3,   classique: 4,   img: "assets/choco.webp" },
-  { id: "saumon",       name: "Saumon Ponzu Ciboule",            desc: "Saumon mariné au ponzu, ciboule fraîche.",         mini: 3,   classique: 4.5, img: "assets/saumon.webp" },
-  { id: "thon-mayo",    name: "Thon Mayo",                       desc: "Thon mayonnaise, classique et généreux.",          mini: 3,   classique: 4,   img: "assets/thon-mayo.webp" },
-  { id: "thon-spicy",   name: "Thon Mayo Spicy",                 desc: "Thon mayonnaise relevé au piment.",                mini: 3,   classique: 4,   img: "assets/thon-spicy.webp" },
-  { id: "tamago",       name: "Tamago (Œuf Mayo)",               desc: "Omelette japonaise et mayonnaise maison.",         mini: 3,   classique: 4,   img: "assets/tamago.webp" },
+  { id: "wakame",      name: "Algue Wakame Edamame",         desc: "Riz vinaigré, wakame et edamame, sésame grillé.", mini: 3,   classique: 4,   img: "wakame.webp" },
+  { id: "poulet",       name: "Poulet Teriyaki",               desc: "Poulet mariné teriyaki, oignons nouveaux.",        mini: 3,   classique: 4,   img: "poulet.webp" },
+  { id: "thon-sesame",  name: "Thon Rouge Sésame Sauce Soja",   desc: "Thon rouge mariné au sésame et sauce soja.",       mini: 3,   classique: 4.5, img: "thon-sesame.webp" },
+  { id: "furikake",     name: "Furikake Shiso",                 desc: "Riz assaisonné au furikake et shiso frais.",       mini: 3,   classique: 4,   img: "furikake.webp" },
+  { id: "choco",        name: "Choco Banane",                   desc: "Banane et pépites de chocolat, version sucrée.",   mini: 3,   classique: 4,   img: "choco.webp" },
+  { id: "saumon",       name: "Saumon Ponzu Ciboule",            desc: "Saumon mariné au ponzu, ciboule fraîche.",         mini: 3,   classique: 4.5, img: "saumon.webp" },
+  { id: "thon-mayo",    name: "Thon Mayo",                       desc: "Thon mayonnaise, classique et généreux.",          mini: 3,   classique: 4,   img: "thon-mayo.webp" },
+  { id: "thon-spicy",   name: "Thon Mayo Spicy",                 desc: "Thon mayonnaise relevé au piment.",                mini: 3,   classique: 4,   img: "thon-spicy.webp" },
+  { id: "tamago",       name: "Tamago (Œuf Mayo)",               desc: "Omelette japonaise et mayonnaise maison.",         mini: 3,   classique: 4,   img: "tamago.webp" },
 ];
 
 /* état: quantité mini/classique par produit + notes par ligne */
